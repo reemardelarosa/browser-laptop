@@ -15,15 +15,17 @@ const settings = require('../../../js/constants/settings')
 // self & utils
 const userModel = require('../api/userModel.js')
 const userModelState = require('../../common/state/userModelState')
+const {makeImmutable} = require('../../common/state/immutableUtil')
 
 // webContents.getFocusedWebContents()
 // all of these are todo
 const userModelReducer = (state, action, immutableAction) => {
   action = immutableAction || makeImmutable(action)
-  if (!appConfig.batAds.enabled) {
-    state = userModel.dummyLog(state)
-    return state
-  }
+  // if (!appConfig.BATads.enabled) {
+  //   console.log('no ads')
+  //   state = userModel.dummyLog(state)
+  //   return state
+  // }
   switch (action.actionType) {
     case appConstants.APP_SET_STATE:
       state = userModel.initUM(state)

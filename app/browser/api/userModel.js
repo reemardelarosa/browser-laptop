@@ -145,7 +145,8 @@ const getMethods = () => {
     checkReadyAdServe,
     recordUnidle,
     serveAdNow,
-    changeAdFrequency
+    changeAdFrequency,
+    dummyLog
   }
 
   let privateMethods = {}

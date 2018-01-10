@@ -99,6 +99,7 @@ const settings = {
   METAMASK_PROMPT_DISMISSED: 'extensions.metamask.promptDismissed',
   // Debug settings
   DEBUG_ALLOW_MANUAL_TAB_DISCARD: 'debug.manual-tab-discard.enabled',
+  USERMODEL_ENABLED: 'BATads.enabled',
 
   // DEPRECATED settings
   // DO NOT REMOVE OR CHANGE THESE VALUES
