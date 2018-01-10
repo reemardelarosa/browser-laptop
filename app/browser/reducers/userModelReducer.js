@@ -5,7 +5,7 @@
 'use strict'
 // constants
 const appConstants = require('../../../js/constants/appConstants')
-const appConfig = require('../../../js/constants/appConfig')
+// const appConfig = require('../../../js/constants/appConfig')
 const settings = require('../../../js/constants/settings')
 
 // data things
