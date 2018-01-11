@@ -22,11 +22,6 @@ const validateState = function (state) {
 }
 
 const userModelState = {
-
-  initUM: (state) => {
-    return Immutable.Map() /* not sure this is strictly needed */
-  },
-
   setUserModelValue: (state, key, value) => {
     state = validateState(state)
     if (key == null) {

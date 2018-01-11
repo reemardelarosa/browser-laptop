@@ -9,8 +9,8 @@
 // const path = require('path')
 // const os = require('os')
 // const levelUp = require('level')
-// const historyUtil = require('../../common/lib/historyUtil.js')
-const urlUtil = require('../../../js/lib/urlutil.js')
+// const historyUtil = require('../../common/lib/historyUtil')
+const urlUtil = require('../../../js/lib/urlutil')
 
 // Actions
 // const appActions = require('../../../js/actions/appActions')
@@ -49,18 +49,21 @@ const userAction = (state) => {
 const removeHistorySite = (state, action) => {
   // check to see how ledger removes history
   // first need to establish site classification DB in userModelState
+  return state
 }
 
 const removeAllHistory = (state) => {
   // reset wherever you put the history
+  return state
 }
 
-const saveCachedInfo = () => {
+const saveCachedInfo = (state) => {
   // writes stuff to leveldb
+  return state
 }
 
 const testShoppingData = (state, url) => {
-  const hostname = urlUtil.getHostName(url)
+  const hostname = urlUtil.getHostname(url)
   if (hostname === 'amazon.com') {
     const score = 1.0
     state = userModelState.flagShoppingState(state, url, score)
@@ -73,7 +76,8 @@ const testShoppingData = (state, url) => {
 }
 
 const testSearchState = (state, url) => {
-  const hostname = urlUtil.getHostName(url)
+  console.log('testSearchState:', url)
+  const hostname = urlUtil.getHostname(url)
   if (hostname === 'google.com') {
     const score = 1.0
     state = userModelState.flagSearchState(state, url, score)

@@ -9,7 +9,7 @@ const appConstants = require('../../../js/constants/appConstants')
 const settings = require('../../../js/constants/settings')
 
 // data things
-// const tabState = require('../../common/state/tabState') /* for front tab */
+const tabState = require('../../common/state/tabState') /* for front tab */
 // const pageDataState = require('../../common/state/pageDataState')
 
 // self & utils
@@ -26,55 +26,72 @@ const userModelReducer = (state, action, immutableAction) => {
   //   state = userModel.dummyLog(state)
   //   return state
   // }
-  switch (action.actionType) {
-    case appConstants.APP_SET_STATE:
-      state = userModel.initUM(state)
-      break
+  switch (action.get('actionType')) {
     case appConstants.APP_TAB_UPDATED:
+      console.log('actionType tab updated')
       state = userModel.tabUpdate(state, action)
       break
     case appConstants.APP_REMOVE_HISTORY_SITE:
+      console.log('actionType remove history site')
       state = userModel.removeHistorySite(state, action)
       break
     case appConstants.APP_ON_CLEAR_BROWSING_DATA:
+      console.log('actionType clear browsing data')
       state = userModel.removeAllHistory(state)
       break
-    case appConstants.APP_WINDOW_READY: // RESOURCE_READY
-      state = userModel.testShoppingData(state, action)
-      state = userModel.testSearchState(state, action)
+    case appConstants.APP_LOAD_URL_IN_ACTIVE_TAB_REQUESTED: {
+      const url = action.getIn(['details', 'newURL'])
+      console.log('----load url in active tab:', url)
+      state = userModel.testShoppingData(state, url)
+      state = userModel.testSearchState(state, url)
       break
+    }
+    case appConstants.APP_TAB_ACTIVATE_REQUESTED: {
+      const tabId = action.get('tabId')
+      const tab = tabState.getByTabId(state, tabId)
+      const url = tab.get('url')
+      console.log('----app tab activate requested:', url)
+      state = userModel.testShoppingData(state, url)
+      state = userModel.testSearchState(state, url)
+      break
+    }
     case appConstants.APP_IDLE_STATE_CHANGED:
+      console.log('actionType idle state changed')
       if (action.has('idleState') && action.get('idleState') !== 'active') {
         state = userModel.recordUnidle(state)
       }
       break
     case appConstants.APP_TEXT_SCRAPER_DATA_AVAILABLE:
+      console.log('actionType text scrapper data available')
     //    const lastActivTabId = pageDataState.getLastActiveTabId(state)
     //    const tabId = action.get('tabId')
     //    if (!lastActivTabId || tabId === lastActivTabId) {
       state = userModel.classifyPage(state, action)
       break
     case appConstants.APP_SHUTTING_DOWN:
-      state = userModel.saveCachedInfo()
+      console.log('actionType app shutting down')
+      state = userModel.saveCachedInfo(state)
       break
-    case (appConstants.APP_ADD_AUTOFILL_ADDRESS || appConstants.APP_ADD_AUTOFILL_CREDIT_CARD):
+    case (appConstants.APP_ADD_AUTOFILL_ADDRESS || appConstants.APP_ADD_AUTOFILL_CREDIT_CARD): {
+      console.log('actionType autofill address filled')
       const url = action.getIn(['details', 'newURL'])
       state = userModelState.flagBuyingSomething(state, url)
       break
-    case appConstants.APP_CHANGE_SETTING: // all other settings go here
-      {
-        switch (action.get('key')) {
-          case settings.USERMODEL_ENABELED:
-            {
-              state = userModel.initialize(state, action.get('value'))
-              break
-            }
-          case settings.ADJUST_FREQ:
-            {
-              state = userModel.changeAdFreq(state, action.get('value'))
-            }
+    }
+    // all other settings go here
+    case appConstants.APP_CHANGE_SETTING: {
+      switch (action.get('key')) {
+        case settings.USERMODEL_ENABELED: {
+          console.log('actionType user model enabled')
+          state = userModel.initialize(state, action.get('value'))
+          break
+        }
+        case settings.ADJUST_FREQ: {
+          console.log('actionType adjust freq')
+          state = userModel.changeAdFreq(state, action.get('value'))
         }
       }
+    }
   } // end switch
   return state
 }
