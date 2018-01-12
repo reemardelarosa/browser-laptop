@@ -3,11 +3,9 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 if(chrome.contentSettings.BATads == "allow") {
-  const headers = Array.from(document.querySelectorAll('h1, h2, h3, h4'))
-  const body =  Array.from(document.querySelectorAll('p'))
+  const headers = Array.prototype.map.call(document.querySelectorAll('h1, h2, h3, h4'), function(xx) {return xx.textContent;})
+  const body = Array.prototype.map.call(document.querySelectorAll('p'), function(xx) {return xx.textContent;})
   const scrapeResults = {headers: headers, body: body, url: window.location.href}
-
-/*  console.log(body) */
 
   chrome.ipcRenderer.send('dispatch-action', JSON.stringify([{
     actionType: 'app-text-scraper-data-available',
