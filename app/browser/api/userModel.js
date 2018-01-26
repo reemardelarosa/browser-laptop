@@ -12,6 +12,8 @@
 // const historyUtil = require('../../common/lib/historyUtil')
 const urlUtil = require('../../../js/lib/urlutil')
 
+const um = require('bat-usermodel')
+
 // Actions
 // const appActions = require('../../../js/actions/appActions')
 
@@ -97,6 +99,26 @@ const recordUnidle = (state) => {
 
 const classifyPage = (state, action) => {
   console.log('data in', action)// run NB on the code
+
+  const headers = action.get('scrapedData').get('headers')
+  const body    = action.get('scrapedData').get('body')
+  const words =  headers.concat(body) // combine
+
+  if (words.length < um.minimumWordsToClassify) { 
+    return state;
+  }
+
+  // TODO move these file loads to somewhere else
+  const pageScore = um.NBWordVec(words, um.getMatrixDataSync(), um.getPriorDataSync())
+
+  console.log('pageScore: ', pageScore)
+
+  console.log('state: ', state)
+
+  //everything goes here
+  //return on the state the class / the probability vector
+  //feed back into the state
+
   return state
 }
 
