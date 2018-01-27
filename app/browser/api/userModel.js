@@ -11,7 +11,7 @@
 // const levelUp = require('level')
 // const historyUtil = require('../../common/lib/historyUtil')
 const urlUtil = require('../../../js/lib/urlutil')
-
+const Immutable = require('immutable')
 const um = require('bat-usermodel')
 
 // Actions
@@ -97,27 +97,66 @@ const recordUnidle = (state) => {
   return state
 }
 
-const classifyPage = (state, action) => {
-  console.log('data in', action)// run NB on the code
+function cleanLines(x) {
+  // split each: ['the quick', 'when in'] -> [['the', 'quick'], ['when', 'in']]
+  x = x.map(x => x.split(/\s+/))
+  // flatten: [[a,b], [c,d]] -> [a, b, c, d]
+  x = x.reduce((x,y) => x.concat(y), [])
+  // lowecase each
+  x = x.map(x => x.toLowerCase())
+  x = x.map(x => x.trim())
+  return x
+}
 
-  const headers = action.get('scrapedData').get('headers')
-  const body    = action.get('scrapedData').get('body')
-  const words =  headers.concat(body) // combine
+const classifyPage = (state, action) => {
+  //console.log('data in', action)// run NB on the code
+
+  let headers = action.get('scrapedData').get('headers')
+  let body    = action.get('scrapedData').get('body')
+
+  headers = cleanLines(headers)
+  body    = cleanLines(body)
+
+  let words =  headers.concat(body) // combine
 
   if (words.length < um.minimumWordsToClassify) { 
     return state;
   }
 
-  // TODO move these file loads to somewhere else
+  if (words.length > um.maximumWordsToClassify) {
+    words = words.slice(0, um.maximumWordsToClassify)
+  }
+
+// TODO move these file loads to somewhere else
   const pageScore = um.NBWordVec(words, um.getMatrixDataSync(), um.getPriorDataSync())
 
-  console.log('pageScore: ', pageScore)
+  const stateKey = ['page-score-history']
 
-  console.log('state: ', state)
+  let previous = state.getIn(stateKey)
 
-  //everything goes here
-  //return on the state the class / the probability vector
-  //feed back into the state
+  if (!Immutable.List.isList(previous)) {
+    console.warn('Previously stored page score history is not a List.')
+    previous = Immutable.fromJS([])
+  }
+
+  let ringbuf = previous
+
+  ringbuf = ringbuf.push(Immutable.List(pageScore))
+
+  let n = ringbuf.size
+  console.log('n: ', n)
+
+  const maxRowsInPageScoreHistory = 2
+  // this is the "rolling window"
+  // in general, this is triggered w/ probability 1
+  if (n > maxRowsInPageScoreHistory) {
+    let diff = n - maxRowsInPageScoreHistory
+    ringbuf = ringbuf.slice(diff)
+  }
+
+  //ringbuf = Immutable.fromJS(ringbuf)
+
+  state = state.setIn(stateKey, ringbuf)
 
   return state
 }
