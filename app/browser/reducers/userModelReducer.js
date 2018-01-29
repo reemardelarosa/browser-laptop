@@ -27,6 +27,10 @@ const userModelReducer = (state, action, immutableAction) => {
   //   return state
   // }
   switch (action.get('actionType')) {
+
+    case appConstants.APP_SET_STATE: // performed once on app startup
+      state = userModel.initialize(state)
+      break
     case appConstants.APP_TAB_UPDATED:
       console.log('actionType tab updated')
       state = userModel.tabUpdate(state, action)

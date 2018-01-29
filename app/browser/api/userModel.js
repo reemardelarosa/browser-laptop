@@ -14,6 +14,9 @@ const urlUtil = require('../../../js/lib/urlutil')
 const Immutable = require('immutable')
 const um = require('bat-usermodel')
 
+let matrixData
+let priorData
+
 // Actions
 // const appActions = require('../../../js/actions/appActions')
 
@@ -32,7 +35,18 @@ const miliseconds = {
 
 /* do things */
 const initialize = (state) => {
-  state = userModelState.setAdFrequency(state, 15)
+
+  // TODO turn back on?
+  //state = userModelState.setAdFrequency(state, 15)
+
+  // after the app has initialized, load the big files we need
+  // this could be done however slowly in the background
+  // on the other side, return early until these are populated
+  setImmediate(function() {
+    matrixData = um.getMatrixDataSync()
+    priorData = um.getPriorDataSync()
+  });
+
   return state
 }
 
@@ -120,16 +134,21 @@ const classifyPage = (state, action) => {
   let words =  headers.concat(body) // combine
 
   if (words.length < um.minimumWordsToClassify) { 
-    return state;
+    return state
   }
 
   if (words.length > um.maximumWordsToClassify) {
     words = words.slice(0, um.maximumWordsToClassify)
   }
 
-// TODO move these file loads to somewhere else
-  const pageScore = um.NBWordVec(words, um.getMatrixDataSync(), um.getPriorDataSync())
+  // don't do anything until our files have loaded in the background
+  if(!matrixData || !priorData) {
+    return state
+  }
 
+  const pageScore = um.NBWordVec(words, matrixData, priorData)
+
+// TODO seems like we may have a pattern for this in userModelState.js already ?
   const stateKey = ['page-score-history']
 
   let previous = state.getIn(stateKey)
