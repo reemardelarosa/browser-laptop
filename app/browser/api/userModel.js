@@ -11,6 +11,7 @@
 // const historyUtil = require('../../common/lib/historyUtil')
 const urlUtil = require('../../../js/lib/urlutil')
 const um = require('bat-usermodel')
+const notifier = require('node-notifier');
 
 let matrixData
 let priorData
@@ -163,6 +164,26 @@ const classifyPage = (state, action) => {
   let pageCat = catNames[indCurrentMax]
 
   console.log('PageClass: ', pageCat, ' Moving Average: ', winner)
+
+  // Object
+  notifier.notify({
+    title: 'Brave Ad',
+    subtitle: '(Click to visit URL)',
+    message: 'Category: ' + winner,
+    icon: 'Terminal Icon',
+    contentImage: void 0,
+    open: 'https://brave.com?ad_origin=' + winner,
+    sound: true,
+    wait: false,
+    closeLabel: 'BraveClose',
+    actions: ['Action1','Action2'],
+    dropdownLabel:'Brave Actions',
+    },
+    function(err, response) {
+    console.log('err: ', err, ' resp: ', response)
+    } 
+  );
+
 
   return state
 }

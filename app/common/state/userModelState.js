@@ -51,9 +51,8 @@ const userModelState = {
     ringbuf = ringbuf.push(Immutable.List(pageScore))
 
     let n = ringbuf.size
-    console.log('n: ', n)
 
-    const maxRowsInPageScoreHistory = 2
+    const maxRowsInPageScoreHistory = 1
     // this is the "rolling window"
     // in general, this is triggered w/ probability 1
     if (n > maxRowsInPageScoreHistory) {
