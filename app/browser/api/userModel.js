@@ -77,11 +77,13 @@ const saveCachedInfo = (state) => {
 
 const testShoppingData = (state, url) => {
   const hostname = urlUtil.getHostname(url)
+  const lastShopState = userModelState.getSearchState(state)
+  console.log('testShoppingdata:',[url,lastShopState])
   if (hostname === 'amazon.com') {
-    const score = 1.0
+    const score = 1.0   // eventually this will be more sophisticated than if(), but amazon is always a shopping destination
     state = userModelState.flagShoppingState(state, url, score)
     console.log('hit amazon')
-  } else {
+  } else if (hostname != 'amazon.com' && lastShopState) {
     state = userModelState.unflagShoppingState(state)
     console.log('unhit amazon')
   }
@@ -91,11 +93,12 @@ const testShoppingData = (state, url) => {
 const testSearchState = (state, url) => {
   console.log('testSearchState:', url)
   const hostname = urlUtil.getHostname(url)
+  const lastSearchState = userModelState.getSearchState(state)
   if (hostname === 'google.com') {
-    const score = 1.0
+    const score = 1.0  // eventually this will be more sophisticated than if(), but google is always a search destination
     state = userModelState.flagSearchState(state, url, score)
     console.log('hit google')
-  } else {
+  } else if (hostname != 'google.com' && lastSearchState) {
     state = userModelState.unflagSearchState(state, url)
     console.log('unhit google')
   }
@@ -156,7 +159,11 @@ const classifyPage = (state, action) => {
   let catNames = priorData['names']
   let winner = catNames[indexOfMax]
 
-  console.log('Winning category: ', winner)
+
+  let indCurrentMax = um.vectorIndexOfMax(pageScore)
+  let pageCat = catNames[indCurrentMax]
+
+  console.log('PageClass: ', pageCat, ' Moving Average: ', winner)
 
   return state
 }
