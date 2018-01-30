@@ -30,31 +30,33 @@ const userModelReducer = (state, action, immutableAction) => {
     case appConstants.APP_SET_STATE: // performed once on app startup
       state = userModel.initialize(state)
       break
-    case appConstants.APP_TAB_UPDATED:
+    case appConstants.APP_TAB_UPDATED: // kind of worthless; fires too often
       state = userModel.tabUpdate(state, action)
       break
-    case appConstants.APP_REMOVE_HISTORY_SITE:
+    case appConstants.APP_REMOVE_HISTORY_SITE: // empty
       console.log('actionType remove history site')
       state = userModel.removeHistorySite(state, action)
       break
     case appConstants.APP_ON_CLEAR_BROWSING_DATA:
       state = userModel.removeAllHistory(state)
       break
-    case appConstants.APP_LOAD_URL_IN_ACTIVE_TAB_REQUESTED: {
+    case appConstants.APP_LOAD_URL_IN_ACTIVE_TAB_REQUESTED: { // this doesn't seem to ever get called TODO find replacement
       const url = action.getIn(['details', 'newURL'])
+      console.log('load_url_active_tab_req')
       state = userModel.testShoppingData(state, url)
       state = userModel.testSearchState(state, url)
       break
     }
-    case appConstants.APP_TAB_ACTIVATE_REQUESTED: {
+    case appConstants.APP_TAB_ACTIVATE_REQUESTED: { // tab switching
       const tabId = action.get('tabId')
       const tab = tabState.getByTabId(state, tabId)
       const url = tab.get('url')
+      console.log('app_tab_activate') // tab switching is interesting, but shouldn't call these TODO delete them once they work and you have an appConstant which makes sense
       state = userModel.testShoppingData(state, url)
       state = userModel.testSearchState(state, url)
       break
     }
-    case appConstants.APP_IDLE_STATE_CHANGED:
+    case appConstants.APP_IDLE_STATE_CHANGED: // TODO where to set this globally
       if (action.has('idleState') && action.get('idleState') !== 'active') {
         state = userModel.recordUnidle(state)
       }

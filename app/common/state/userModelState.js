@@ -128,10 +128,15 @@ const userModelState = {
   flagShoppingState: (state, url) => {
     state = validateState(state)
     const date = new Date().getTime()
-    state.setIn(['usermodel', 'shopactivity'], true)
+    state.setIn(['usermodel', 'shopactivity'], true) // never hit; I think design is wrong
     state.setIn(['usermodel', 'shopurl'], url)
     state.setIn(['usermodel', 'lastshoptime'], date)
     return state
+  },
+
+  getSearchState: (state) => {
+    state = validateState(state)
+    return state.getIn(['usermodel', 'searchactivity'])
   },
 
   getShoppingState: (state) => {
