@@ -78,12 +78,12 @@ const saveCachedInfo = (state) => {
 const testShoppingData = (state, url) => {
   const hostname = urlUtil.getHostname(url)
   const lastShopState = userModelState.getSearchState(state)
-  console.log('testShoppingdata:',[url,lastShopState])
+  console.log('testShoppingdata:', [url, lastShopState])
   if (hostname === 'amazon.com') {
     const score = 1.0   // eventually this will be more sophisticated than if(), but amazon is always a shopping destination
     state = userModelState.flagShoppingState(state, url, score)
     console.log('hit amazon')
-  } else if (hostname != 'amazon.com' && lastShopState) {
+  } else if (hostname !== 'amazon.com' && lastShopState) {
     state = userModelState.unflagShoppingState(state)
     console.log('unhit amazon')
   }
@@ -98,7 +98,7 @@ const testSearchState = (state, url) => {
     const score = 1.0  // eventually this will be more sophisticated than if(), but google is always a search destination
     state = userModelState.flagSearchState(state, url, score)
     console.log('hit google')
-  } else if (hostname != 'google.com' && lastSearchState) {
+  } else if (hostname !== 'google.com' && lastSearchState) {
     state = userModelState.unflagSearchState(state, url)
     console.log('unhit google')
   }
