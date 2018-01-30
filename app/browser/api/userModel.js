@@ -159,7 +159,6 @@ const classifyPage = (state, action) => {
   let catNames = priorData['names']
   let winner = catNames[indexOfMax]
 
-
   let indCurrentMax = um.vectorIndexOfMax(pageScore)
   let pageCat = catNames[indCurrentMax]
 
