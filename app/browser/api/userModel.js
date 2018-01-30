@@ -5,13 +5,11 @@
 'use strict'
 
 // load utilities
-// const Immutable = require('immutable')
 // const path = require('path')
 // const os = require('os')
 // const levelUp = require('level')
 // const historyUtil = require('../../common/lib/historyUtil')
 const urlUtil = require('../../../js/lib/urlutil')
-const Immutable = require('immutable')
 const um = require('bat-usermodel')
 
 let matrixData
@@ -35,17 +33,16 @@ const miliseconds = {
 
 /* do things */
 const initialize = (state) => {
-
   // TODO turn back on?
-  //state = userModelState.setAdFrequency(state, 15)
+  // state = userModelState.setAdFrequency(state, 15)
 
   // after the app has initialized, load the big files we need
   // this could be done however slowly in the background
   // on the other side, return early until these are populated
-  setImmediate(function() {
+  setImmediate(function () {
     matrixData = um.getMatrixDataSync()
     priorData = um.getPriorDataSync()
-  });
+  })
 
   return state
 }
@@ -69,7 +66,7 @@ const removeHistorySite = (state, action) => {
 }
 
 const removeAllHistory = (state) => {
-  // reset wherever you put the history
+  // TODO reset wherever you put the history
   return state
 }
 
@@ -111,11 +108,11 @@ const recordUnidle = (state) => {
   return state
 }
 
-function cleanLines(x) {
+function cleanLines (x) {
   // split each: ['the quick', 'when in'] -> [['the', 'quick'], ['when', 'in']]
   x = x.map(x => x.split(/\s+/))
   // flatten: [[a,b], [c,d]] -> [a, b, c, d]
-  x = x.reduce((x,y) => x.concat(y), [])
+  x = x.reduce((x, y) => x.concat(y), [])
   // lowecase each
   x = x.map(x => x.toLowerCase())
   x = x.map(x => x.trim())
@@ -123,17 +120,17 @@ function cleanLines(x) {
 }
 
 const classifyPage = (state, action) => {
-  //console.log('data in', action)// run NB on the code
+  // console.log('data in', action)// run NB on the code
 
   let headers = action.get('scrapedData').get('headers')
-  let body    = action.get('scrapedData').get('body')
+  let body = action.get('scrapedData').get('body')
 
   headers = cleanLines(headers)
-  body    = cleanLines(body)
+  body = cleanLines(body)
 
-  let words =  headers.concat(body) // combine
+  let words = headers.concat(body) // combine
 
-  if (words.length < um.minimumWordsToClassify) { 
+  if (words.length < um.minimumWordsToClassify) {
     return state
   }
 
@@ -142,40 +139,24 @@ const classifyPage = (state, action) => {
   }
 
   // don't do anything until our files have loaded in the background
-  if(!matrixData || !priorData) {
+  if (!matrixData || !priorData) {
     return state
   }
 
   const pageScore = um.NBWordVec(words, matrixData, priorData)
 
-// TODO seems like we may have a pattern for this in userModelState.js already ?
-  const stateKey = ['page-score-history']
+  state = userModelState.appendPageScoreToHistoryAndRotate(state, pageScore)
 
-  let previous = state.getIn(stateKey)
+  let mutable = true
+  let history = userModelState.getPageScoreHistory(state, mutable)
 
-  if (!Immutable.List.isList(previous)) {
-    console.warn('Previously stored page score history is not a List.')
-    previous = Immutable.fromJS([])
-  }
+  let scores = um.deriveCategoryScores(history)
+  let indexOfMax = um.vectorIndexOfMax(scores)
 
-  let ringbuf = previous
+  let catNames = priorData['names']
+  let winner = catNames[indexOfMax]
 
-  ringbuf = ringbuf.push(Immutable.List(pageScore))
-
-  let n = ringbuf.size
-  console.log('n: ', n)
-
-  const maxRowsInPageScoreHistory = 2
-  // this is the "rolling window"
-  // in general, this is triggered w/ probability 1
-  if (n > maxRowsInPageScoreHistory) {
-    let diff = n - maxRowsInPageScoreHistory
-    ringbuf = ringbuf.slice(diff)
-  }
-
-  //ringbuf = Immutable.fromJS(ringbuf)
-
-  state = state.setIn(stateKey, ringbuf)
+  console.log('Winning category: ', winner)
 
   return state
 }

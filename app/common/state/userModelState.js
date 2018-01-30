@@ -36,6 +36,55 @@ const userModelState = {
     return state.getIn(['usermodel', key]) || Immutable.Map()
   },
 
+  appendPageScoreToHistoryAndRotate: (state, pageScore) => {
+    const stateKey = ['usermodel', 'pagescorehistory']
+
+    let previous = state.getIn(stateKey)
+
+    if (!Immutable.List.isList(previous)) {
+      console.warn('Previously stored page score history is not a List.')
+      previous = Immutable.fromJS([])
+    }
+
+    let ringbuf = previous
+
+    ringbuf = ringbuf.push(Immutable.List(pageScore))
+
+    let n = ringbuf.size
+    console.log('n: ', n)
+
+    const maxRowsInPageScoreHistory = 2
+    // this is the "rolling window"
+    // in general, this is triggered w/ probability 1
+    if (n > maxRowsInPageScoreHistory) {
+      let diff = n - maxRowsInPageScoreHistory
+      ringbuf = ringbuf.slice(diff)
+    }
+
+    // ringbuf = Immutable.fromJS(ringbuf)
+
+    state = state.setIn(stateKey, ringbuf)
+
+    return state
+  },
+
+  getPageScoreHistory: (state, mutable = false) => {
+    let history = state.getIn(['usermodel', 'pagescorehistory']) || []
+
+    if (!mutable) {
+      return history // immutable version
+    }
+
+    let plain = []
+
+    for (let i = 0; i < history.size; i++) {
+      let row = history.get(i)
+      plain.push(row.toJS())
+    }
+
+    return plain // mutable version
+  },
+
   // later maybe include a search term and history
   flagSearchState: (state, url, score) => {
     state = validateState(state)
