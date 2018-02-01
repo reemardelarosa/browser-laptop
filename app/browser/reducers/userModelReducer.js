@@ -33,7 +33,7 @@ const userModelReducer = (state, action, immutableAction) => {
     case appConstants.APP_TAB_UPDATED: // kind of worthless; fires too often
       state = userModel.tabUpdate(state, action)
       break
-    case appConstants.APP_REMOVE_HISTORY_SITE: // empty
+    case appConstants.APP_REMOVE_HISTORY_SITE:
       console.log('actionType remove history site')
       state = userModel.removeHistorySite(state, action)
       break

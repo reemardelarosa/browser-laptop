@@ -84,6 +84,13 @@ const userModelState = {
     return plain // mutable version
   },
 
+  removeAllHistory: (state) => {
+    state = makeImmutable(state)
+    state = state.setIn(['usermodel', 'pagescorehistory'], Immutable.List())
+    state = state.setIn(['usermodel'], Immutable.Map())
+    return state
+  },
+
   // later maybe include a search term and history
   flagSearchState: (state, url, score) => {
     state = validateState(state)

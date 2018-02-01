@@ -63,11 +63,14 @@ const userAction = (state) => {
 const removeHistorySite = (state, action) => {
   // check to see how ledger removes history
   // first need to establish site classification DB in userModelState
+
+  // blow it all away for now
+  state = userModelState.removeAllHistory(state)
   return state
 }
 
 const removeAllHistory = (state) => {
-  // TODO reset wherever you put the history
+  state = userModelState.removeAllHistory(state)
   return state
 }
 
