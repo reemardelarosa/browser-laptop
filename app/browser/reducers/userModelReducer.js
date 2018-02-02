@@ -1,6 +1,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
+// SCL COMMENTS
 // Like with UMS, it was written in an aspirational way, not because I had any idea if
 // it was correct.
 // initialize should initialize the UMS. At present it is missing initialization for searching/shopping/userActivity
@@ -37,6 +38,7 @@
 // A good time to serve an ad is when the user is about to go back to browsing.
 // Possibly it can all be done through TEXT_SCRAPER_DATA_AVAILABLE and something that does what I wish IDLE_STATE_CHANGE did.
 // Other than the "fix history/constants" pieces, this would make the reducer design considerably simpler.
+// END SCL COMMENTS
 
 'use strict'
 // constants

@@ -11,7 +11,7 @@
 // const historyUtil = require('../../common/lib/historyUtil')
 const urlUtil = require('../../../js/lib/urlutil')
 const um = require('bat-usermodel')
-const notifier = require('node-notifier');
+const notifier = require('node-notifier')
 
 let matrixData
 let priorData
@@ -179,14 +179,13 @@ const classifyPage = (state, action) => {
     sound: true,
     wait: false,
     closeLabel: 'BraveClose',
-    actions: ['Action1','Action2'],
-    dropdownLabel:'Brave Actions',
-    },
-    function(err, response) {
-    console.log('err: ', err, ' resp: ', response)
-    } 
-  );
-
+    actions: ['Action1', 'Action2'],
+    dropdownLabel: 'Brave Actions'
+  },
+    function (err, response) {
+      console.log('err: ', err, ' resp: ', response)
+    }
+  )
 
   return state
 }
