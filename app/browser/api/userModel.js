@@ -168,6 +168,18 @@ const classifyPage = (state, action) => {
 
   console.log('PageClass: ', pageCat, ' Moving Average: ', winner)
 
+  notifier.on('click', function(notifierObject, options) {
+    // Triggers if `wait: true` and user clicks notification
+    // console.log('notifierObject: ', notifierObject)
+    console.log('click options: ', options, '\n')
+  });
+  
+  notifier.on('timeout', function(notifierObject, options) {
+    // Triggers if `wait: true` and notification closes
+    // console.log('notifierObject: ', notifierObject)
+    console.log('timeout options: ', options, '\n')
+  });
+
   // Object
   notifier.notify({
     title: 'Brave Ad',
@@ -177,15 +189,34 @@ const classifyPage = (state, action) => {
     contentImage: void 0,
     open: 'https://brave.com?ad_origin=' + winner,
     sound: true,
-    wait: false,
+    wait: true,
+    timeout: 5,
     closeLabel: 'BraveClose',
-    actions: ['Action1', 'Action2'],
-    dropdownLabel: 'Brave Actions'
-  },
-    function (err, response) {
-      console.log('err: ', err, ' resp: ', response)
-    }
-  )
+    actions: ['Action1','Action2'],
+    dropdownLabel:'Brave Actions',
+    //appIcon: 
+    //contentImage
+    },
+    function(err, response, metadata) {
+
+      if (err) {
+        console.log('BAT Ad Notification Error: ', err)
+      }
+
+      if (response) {
+        // it seemed like we get 'closed' for `closed`
+        // and 'activate' for `action1`, `action2`, and `clicked body`
+        console.log('BAT Ad Notification Response: ', response)
+      }
+
+      if (metadata) {
+        console.log('BAT Ad Notification Metadata: ', metadata)
+      }
+
+
+    } 
+  );
+
 
   return state
 }
