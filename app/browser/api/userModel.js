@@ -168,17 +168,17 @@ const classifyPage = (state, action) => {
 
   console.log('PageClass: ', pageCat, ' Moving Average: ', winner)
 
-  notifier.on('click', function(notifierObject, options) {
+  notifier.on('click', function (notifierObject, options) {
     // Triggers if `wait: true` and user clicks notification
     // console.log('notifierObject: ', notifierObject)
     console.log('click options: ', options, '\n')
-  });
-  
-  notifier.on('timeout', function(notifierObject, options) {
+  })
+
+  notifier.on('timeout', function (notifierObject, options) {
     // Triggers if `wait: true` and notification closes
     // console.log('notifierObject: ', notifierObject)
     console.log('timeout options: ', options, '\n')
-  });
+  })
 
   // Object
   notifier.notify({
@@ -192,13 +192,12 @@ const classifyPage = (state, action) => {
     wait: true,
     timeout: 5,
     closeLabel: 'BraveClose',
-    actions: ['Action1','Action2'],
-    dropdownLabel:'Brave Actions',
-    //appIcon: 
-    //contentImage
-    },
-    function(err, response, metadata) {
-
+    actions: ['Action1', 'Action2'],
+    dropdownLabel: 'Brave Actions'
+    // appIcon:
+    // contentImage
+  },
+    function (err, response, metadata) {
       if (err) {
         console.log('BAT Ad Notification Error: ', err)
       }
@@ -212,10 +211,8 @@ const classifyPage = (state, action) => {
       if (metadata) {
         console.log('BAT Ad Notification Metadata: ', metadata)
       }
-
-
-    } 
-  );
+    }
+  )
 
 
   return state
