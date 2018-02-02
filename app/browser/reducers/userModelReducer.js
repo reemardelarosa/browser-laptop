@@ -1,6 +1,42 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
+// Like with UMS, it was written in an aspirational way, not because I had any idea if
+// it was correct.
+// initialize should initialize the UMS. At present it is missing initialization for searching/shopping/userActivity
+// APP_TAB_UPDATED
+// I was hoping this would give some interesting telemetry, but it seems to fire too often (presumably when loading different pieces of the DOM)
+// If there is something like this which updates only when a page is loaded, I guess that's what I was looking for.
+// maybee TEXT_SCRAPER_DATA_AVAIL can do this.
+// APP_REMOVE_HISTORY_SITE
+// eventually this needs to remove classifier site data in the UMS -LOW PRIORITY
+// APP_ON_CLEAR_BROWSING_DATA
+// this needs to clear all UMS data, reset to init
+// APP_LOAD_URL_IN_ACTIVE_TAB_REQUESTED
+// I had assumed this would fire when a tab gets loaded or a new tab is opened. It doesn't. Might delete it.
+// APP_TAB_ACTIVATE_REQUESTED
+// This seems to only work on switching between existing tabs. It's useful, but probably the wrong place to test for search or shopping.
+// APP_IDLE_STATE_CHANGED
+// I was hoping idle would happen after like 2 minutes of browser idleness
+// It does occasionally fire, but the period of time is indeterminate and doesn't look reliable
+// TODO someone tell me WTF this thing is
+// APP_TEXT_SCRAPER_DATA_AVAILABLE
+// this actually works! At some point I defined this message, and BBondy eventually made it go.
+// this guy fires both when loading a new page in a new tab, when clicking through to a new page, and when switching to another tab.
+// I suggest this one gets overloaded and used for testShopping/Search, and others deleted
+// APP_SHUTTING_DOWN
+// should do stuff when browser is shut down
+// APP_ADD_AUTOFILL_XXXX
+// the idea of this is to find when the user has purchased something, so we don't serve him an
+// ad any more. Or, perhaps this is a super great time to serve an ad. Anyway I want to record this, and possibly fire off an ad when this happens
+// APP_CHANGE_SETTING
+
+// TODO INCOMPLETES:
+// It is important to have something  like "APP_IDLE_STATE_CHANGED" which records when someone has recently restarted doing stuff
+// I think there should also be something which counts user interactions with the browser, as in, actively is scrolling, reading searching
+// A good time to serve an ad is when the user is about to go back to browsing.
+// Possibly it can all be done through TEXT_SCRAPER_DATA_AVAILABLE and something that does what I wish IDLE_STATE_CHANGE did.
+// Other than the "fix history/constants" pieces, this would make the reducer design considerably simpler.
 
 'use strict'
 // constants
