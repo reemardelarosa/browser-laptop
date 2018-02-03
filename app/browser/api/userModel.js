@@ -214,7 +214,6 @@ const classifyPage = (state, action) => {
     }
   )
 
-
   return state
 }
 
