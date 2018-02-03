@@ -25,10 +25,7 @@
 'use strict'
 // constants
 const appConstants = require('../../../js/constants/appConstants')
-// const appConfig = require('../../../js/constants/appConfig')
 const settings = require('../../../js/constants/settings')
-
-// data things
 const tabState = require('../../common/state/tabState') /* for front tab */
 // const pageDataState = require('../../common/state/pageDataState')
 
@@ -36,7 +33,6 @@ const tabState = require('../../common/state/tabState') /* for front tab */
 const userModel = require('../api/userModel.js')
 const userModelState = require('../../common/state/userModelState')
 const {makeImmutable} = require('../../common/state/immutableUtil')
-
 
 const userModelReducer = (state, action, immutableAction) => {
   action = immutableAction || makeImmutable(action)
@@ -77,6 +73,9 @@ const userModelReducer = (state, action, immutableAction) => {
     //    const lastActivTabId = pageDataState.getLastActiveTabId(state)
     //    const tabId = action.get('tabId')
     //    if (!lastActivTabId || tabId === lastActivTabId) {
+      const tabId = action.get('tabId')
+      const tab = tabState.getByTabId(state, tabId)
+      const url = tab.get('url')
       state = userModel.testShoppingData(state, url)
       state = userModel.testSearchState(state, url)
       state = userModel.classifyPage(state, action)
