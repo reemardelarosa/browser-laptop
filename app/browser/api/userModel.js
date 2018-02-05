@@ -168,6 +168,8 @@ const classifyPage = (state, action) => {
 
   console.log('PageClass: ', pageCat, ' Moving Average: ', winner)
 
+  let samples = um.getSampleAdFiles()
+
   notifier.on('click', function (notifierObject, options) {
     // Triggers if `wait: true` and user clicks notification
     // console.log('notifierObject: ', notifierObject)
@@ -185,17 +187,17 @@ const classifyPage = (state, action) => {
     title: 'Brave Ad',
     subtitle: '(Click to visit URL)',
     message: 'Category: ' + winner,
-    icon: 'Terminal Icon',
-    contentImage: void 0,
     open: 'https://brave.com?ad_origin=' + winner,
     sound: true,
     wait: true,
     timeout: 5,
     closeLabel: 'BraveClose',
     actions: ['Action1', 'Action2'],
-    dropdownLabel: 'Brave Actions'
-    // appIcon:
-    // contentImage
+    dropdownLabel: 'Brave Actions',
+    // icon: 'Terminal Icon', // Absolute Path to Triggering Icon
+    icon: samples[0],
+    contentImage: samples[1]
+    // appIcon: //appears in macOS sample but not parent doc. doesn't seem to do anything
   },
     function (err, response, metadata) {
       if (err) {
