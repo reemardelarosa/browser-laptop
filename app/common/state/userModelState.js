@@ -29,6 +29,8 @@ const assert = require('assert') // validateState uses this
 const {makeImmutable, isMap} = require('../../common/state/immutableUtil') // needed?
 const urlUtil = require('../../../js/lib/urlutil') //  used to check valid URL: test
 
+const maxRowsInPageScoreHistory = 5
+
 const validateState = function (state) {
   state = makeImmutable(state)
   assert.ok(isMap(state), 'state must be an Immutable.Map')
@@ -67,7 +69,6 @@ const userModelState = {
 
     let n = ringbuf.size
 
-    const maxRowsInPageScoreHistory = 1
     // this is the "rolling window"
     // in general, this is triggered w/ probability 1
     if (n > maxRowsInPageScoreHistory) {

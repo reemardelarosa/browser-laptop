@@ -15,6 +15,7 @@ const notifier = require('node-notifier')
 
 let matrixData
 let priorData
+let sampleAdFeed
 
 // Actions
 // const appActions = require('../../../js/actions/appActions')
@@ -43,6 +44,7 @@ const initialize = (state) => {
   setImmediate(function () {
     matrixData = um.getMatrixDataSync()
     priorData = um.getPriorDataSync()
+    sampleAdFeed = um.getSampleAdFeed()
   })
 
   return state
@@ -82,35 +84,29 @@ const saveCachedInfo = (state) => {
 const testShoppingData = (state, url) => {
   const hostname = urlUtil.getHostname(url)
   const lastShopState = userModelState.getSearchState(state)
-  console.log('testShoppingdata:', [url, lastShopState])
+  // console.log('testShoppingdata:', [url, lastShopState])
   if (hostname === 'amazon.com') {
     const score = 1.0   // eventually this will be more sophisticated than if(), but amazon is always a shopping destination
     state = userModelState.flagShoppingState(state, url, score)
-    console.log('hit amazon')
   } else if (hostname !== 'amazon.com' && lastShopState) {
     state = userModelState.unflagShoppingState(state)
-    console.log('unhit amazon')
   }
   return state
 }
 
 const testSearchState = (state, url) => {
-  console.log('testSearchState:', url)
   const hostname = urlUtil.getHostname(url)
   const lastSearchState = userModelState.getSearchState(state)
   if (hostname === 'google.com') {
     const score = 1.0  // eventually this will be more sophisticated than if(), but google is always a search destination
     state = userModelState.flagSearchState(state, url, score)
-    console.log('hit google')
   } else if (hostname !== 'google.com' && lastSearchState) {
     state = userModelState.unflagSearchState(state, url)
-    console.log('unhit google')
   }
   return state
 }
 
 const recordUnidle = (state) => {
-  console.log('unidle')
   state = userModelState.setLastUserIdleStopTime(state)
   return state
 }
@@ -124,6 +120,11 @@ function cleanLines (x) {
   x = x.map(x => x.toLowerCase())
   x = x.map(x => x.trim())
   return x
+}
+
+function randomKey (dictionary) {
+  var keys = Object.keys(dictionary)
+  return keys[keys.length * Math.random() << 0]
 }
 
 const classifyPage = (state, action) => {
@@ -151,6 +152,10 @@ const classifyPage = (state, action) => {
   }
 
   const pageScore = um.NBWordVec(words, matrixData, priorData)
+  let catNames = priorData['names']
+
+  let immediateMax = um.vectorIndexOfMax(pageScore)
+  let immediateWinner = catNames[immediateMax]
 
   state = userModelState.appendPageScoreToHistoryAndRotate(state, pageScore)
 
@@ -160,61 +165,88 @@ const classifyPage = (state, action) => {
   let scores = um.deriveCategoryScores(history)
   let indexOfMax = um.vectorIndexOfMax(scores)
 
-  let catNames = priorData['names']
-  let winner = catNames[indexOfMax]
+  let winnerOverTime = catNames[indexOfMax]
 
-  let indCurrentMax = um.vectorIndexOfMax(pageScore)
-  let pageCat = catNames[indCurrentMax]
-
-  console.log('PageClass: ', pageCat, ' Moving Average: ', winner)
+  console.log('Current Page Class: ', immediateWinner, ' Moving Average of Classes: ', winnerOverTime)
 
   let samples = um.getSampleAdFiles()
+
+  let bundle = sampleAdFeed
+
+  let arbitraryKey
+  let notificationText
+  let notificationUrl
+
+  let allgood = true
+
+  if (bundle) {
+    let result = bundle['categories'][immediateWinner]
+    arbitraryKey = randomKey(result)
+
+    let entry = result[arbitraryKey]
+    let payload = entry[0]
+
+    notificationText = payload['notificationText']
+    notificationUrl = payload['notificationURL']
+  }
+
+  if (!notificationText) {
+    allgood = false
+  }
+
+  if (!notificationUrl) {
+    allgood = false
+  }
 
   notifier.on('click', function (notifierObject, options) {
     // Triggers if `wait: true` and user clicks notification
     // console.log('notifierObject: ', notifierObject)
-    console.log('click options: ', options, '\n')
+    // console.log('click options: ', options, '\n')
   })
 
   notifier.on('timeout', function (notifierObject, options) {
     // Triggers if `wait: true` and notification closes
     // console.log('notifierObject: ', notifierObject)
-    console.log('timeout options: ', options, '\n')
+    // console.log('timeout options: ', options, '\n')
   })
 
-  // Object
-  notifier.notify({
-    title: 'Brave Ad',
-    subtitle: '(Click to visit URL)',
-    message: 'Category: ' + winner,
-    open: 'https://brave.com?ad_origin=' + winner,
+  let details = {
+    title: 'Brave Ad: ' + immediateWinner + ' : ' + arbitraryKey,
+    // subtitle: 'Current cat: ' + immediateWinner + ' : ' + arbitraryKey,
+    message: notificationText,
+    open: notificationUrl, // 'https://brave.com?ad_origin=' + winnerOverTime,
     sound: true,
     wait: true,
-    timeout: 5,
+    timeout: 25,
     closeLabel: 'BraveClose',
     actions: ['Action1', 'Action2'],
     dropdownLabel: 'Brave Actions',
     // icon: 'Terminal Icon', // Absolute Path to Triggering Icon
-    icon: samples[0],
-    contentImage: samples[1]
+    icon: samples[1],
+    contentImage: samples[2]
     // appIcon: //appears in macOS sample but not parent doc. doesn't seem to do anything
-  },
-    function (err, response, metadata) {
-      if (err) {
-        console.log('BAT Ad Notification Error: ', err)
-      }
+  }
 
-      if (response) {
+  let cb = function (err, response, metadata) {
+    if (err) {
+        // console.log('BAT Ad Notification Error: ', err)
+    }
+
+    if (response) {
         // it seemed like we get 'closed' for `closed`
         // and 'activate' for `action1`, `action2`, and `clicked body`
-        console.log('BAT Ad Notification Response: ', response)
-      }
-
-      if (metadata) {
-        console.log('BAT Ad Notification Metadata: ', metadata)
-      }
+        // console.log('BAT Ad Notification Response: ', response)
     }
-  )
+
+    if (metadata) {
+        // console.log('BAT Ad Notification Metadata: ', metadata)
+    }
+  }
+
+  // Object
+  if (allgood) {
+    notifier.notify(details, cb)
+  }
 
   return state
 }
