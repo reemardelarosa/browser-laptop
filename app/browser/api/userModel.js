@@ -10,7 +10,7 @@
 // const levelUp = require('level')
 // const historyUtil = require('../../common/lib/historyUtil')
 const urlUtil = require('../../../js/lib/urlutil')
-const um = require('bat-usermodel')
+const um = require('@brave-intl/bat-usermodel')
 const notifier = require('node-notifier')
 
 let matrixData
