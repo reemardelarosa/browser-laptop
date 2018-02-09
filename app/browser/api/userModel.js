@@ -184,10 +184,16 @@ const classifyPage = (state, action) => {
     arbitraryKey = randomKey(result)
 
     let entry = result[arbitraryKey]
-    let payload = entry[0]
+    // let payload = entry[0]
+    let payload = entry
 
-    notificationText = payload['notificationText']
-    notificationUrl = payload['notificationURL']
+    if (payload) {
+      notificationText = payload['notificationText']
+      notificationUrl = payload['notificationURL']
+    }
+    else {
+      console.warn('BAT Ads: Couldn\'t read ad data for display.')
+    }
   }
 
   if (!notificationText) {
@@ -211,7 +217,7 @@ const classifyPage = (state, action) => {
   })
 
   let details = {
-    title: 'Brave Ad: ' + immediateWinner + ' : ' + arbitraryKey,
+    title: 'Brave Ad: ' + immediateWinner,
     // subtitle: 'Current cat: ' + immediateWinner + ' : ' + arbitraryKey,
     message: notificationText,
     open: notificationUrl, // 'https://brave.com?ad_origin=' + winnerOverTime,
@@ -222,8 +228,8 @@ const classifyPage = (state, action) => {
     actions: ['Action1', 'Action2'],
     dropdownLabel: 'Brave Actions',
     // icon: 'Terminal Icon', // Absolute Path to Triggering Icon
-    icon: samples[1],
-    contentImage: samples[2]
+    // icon: samples[1],
+    // contentImage: samples[2]
     // appIcon: //appears in macOS sample but not parent doc. doesn't seem to do anything
   }
 
