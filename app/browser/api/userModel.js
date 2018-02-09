@@ -18,7 +18,7 @@ let priorData
 let sampleAdFeed
 
 // Actions
-// const appActions = require('../../../js/actions/appActions')
+const appActions = require('../../../js/actions/appActions')
 
 // State
 const userModelState = require('../../common/state/userModelState')
@@ -245,6 +245,7 @@ const classifyPage = (state, action) => {
 
   // Object
   if (allgood) {
+    appActions.onUserModelDemoValue('Add shown')
     notifier.notify(details, cb)
   }
 

@@ -32,6 +32,7 @@ const tabState = require('../../common/state/tabState') /* for front tab */
 // self & utils
 const userModel = require('../api/userModel.js')
 const userModelState = require('../../common/state/userModelState')
+const demoApi = require('../../browser/api/demo')
 const {makeImmutable} = require('../../common/state/immutableUtil')
 
 const userModelReducer = (state, action, immutableAction) => {
@@ -98,9 +99,16 @@ const userModelReducer = (state, action, immutableAction) => {
         }
         case settings.ADJUST_FREQ: {
           state = userModel.changeAdFreq(state, action.get('value'))
+          break
         }
       }
+      break
     }
+    case appConstants.APP_ON_USERMODEL_DEMO_VALUE:
+      {
+        demoApi.appendValue(action.get('value'))
+        break
+      }
   } // end switch
   return state
 }
