@@ -19,6 +19,8 @@ const notificationTypes = require('../../common/constants/notificationTypes')
 const urlUtil = require('../../../js/lib/urlutil')
 const ledgerUtil = require('../../common/lib/ledgerUtil')
 
+const truncateUrl = require('truncate-url')
+
 let matrixData
 let priorData
 let sampleAdFeed
@@ -161,7 +163,7 @@ const classifyPage = (state, action, windowId) => {
 
   let winnerOverTime = catNames[indexOfMax]
   let maxLength = 40
-  let shortUrl = url.length > 40 ? url.substring(0, maxLength-1) : url
+  let shortUrl = truncateUrl(url, maxLength)
 
   console.log('Current Page [' + shortUrl + '] Class: ', immediateWinner, ' Moving Average of Classes: ', winnerOverTime)
 
