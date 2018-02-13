@@ -121,6 +121,7 @@ const classifyPage = (state, action, windowId) => {
 
   let headers = action.getIn(['scrapedData', 'headers'])
   let body = action.getIn(['scrapedData', 'body'])
+  let url = action.getIn(['scrapedData', 'url'])
 
   if (!headers) {
     return state
@@ -159,8 +160,10 @@ const classifyPage = (state, action, windowId) => {
   let indexOfMax = um.vectorIndexOfMax(scores)
 
   let winnerOverTime = catNames[indexOfMax]
+  let maxLength = 40
+  let shortUrl = url.length > 40 ? url.substring(0, maxLength-1) : url
 
-  console.log('Current Page Class: ', immediateWinner, ' Moving Average of Classes: ', winnerOverTime)
+  console.log('Current Page [' + shortUrl + '] Class: ', immediateWinner, ' Moving Average of Classes: ', winnerOverTime)
 
   let bundle = sampleAdFeed
   let arbitraryKey
