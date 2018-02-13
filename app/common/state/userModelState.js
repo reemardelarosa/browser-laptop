@@ -258,7 +258,7 @@ const userModelState = {
   setUserModelError: (state, error, caller) => {
     state = validateState(state)
 
-    state = state.setIn(['ledger', 'info', 'error'], Immutable.fromJS({
+    state = state.setIn(['userModel', 'info', 'error'], Immutable.fromJS({
       caller: caller,
       error: error
     })) // copy pasta from ledger
