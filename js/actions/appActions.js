@@ -1959,6 +1959,13 @@ const appActions = {
     })
   },
 
+  onNativeNotificationClick: function (data) {
+    dispatch({
+      actionType: appConstants.APP_ON_NATIVE_NOTIFICATION_CLICK,
+      data
+    })
+  },
+
   onLedgerMediaPublisher: function (mediaKey, response, duration, revisited) {
     dispatch({
       actionType: appConstants.APP_ON_LEDGER_MEDIA_PUBLISHER,

@@ -27,6 +27,7 @@ const windowActions = require('../actions/windowActions')
 const bookmarkFoldersState = require('../../app/common/state/bookmarkFoldersState')
 const bookmarksState = require('../../app/common/state/bookmarksState')
 const bookmarkUtil = require('../../app/common/lib/bookmarkUtil')
+const notificationUtil = require('../../app/renderer/lib/notificationUtil')
 
 let windowState = Immutable.fromJS({
   activeFrameKey: null,
@@ -801,6 +802,11 @@ const doAction = (action) => {
       const sourceFrameTabId = sourceFrame.get('tabId')
       appActions.tabIndexChangeRequested(sourceFrameTabId, destinationFrameIndex)
       break
+    case windowConstants.WINDOW_ON_NATIVE_NOTIFICATION_OPEN:
+      {
+        notificationUtil.createNotification(action.title, action.options)
+        break
+      }
     default:
       break
   }
