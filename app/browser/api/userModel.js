@@ -165,7 +165,9 @@ const classifyPage = (state, action, windowId) => {
   let maxLength = 40
   let shortUrl = truncateUrl(url, maxLength)
 
-  console.log('Current Page [' + shortUrl + '] Class: ', immediateWinner, ' Moving Average of Classes: ', winnerOverTime)
+  let logString = 'Current Page [' + shortUrl + '] Class: ' + immediateWinner + ' Moving Average of Classes: ' + winnerOverTime
+  console.log(logString)
+  appActions.onUserModelDemoValue(['log item: ', logString])
 
   let bundle = sampleAdFeed
   let arbitraryKey
