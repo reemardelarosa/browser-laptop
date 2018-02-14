@@ -48,7 +48,7 @@ const userModelState = {
 
   getUserModelValue: (state, key) => {
     state = validateState(state)
-    return state.getIn(['userModel', key]) || Immutable.Map() // Q(nejc) I think this is not correct, because not every key is object
+    return state.getIn(['userModel', key])
   },
 
   appendPageScoreToHistoryAndRotate: (state, pageScore) => {
@@ -86,15 +86,7 @@ const userModelState = {
       return history // immutable version
     }
 
-    let plain = []
-
-    // Q(nejc) why can't we just do history.toJS()
-    for (let i = 0; i < history.size; i++) {
-      let row = history.get(i)
-      plain.push(row.toJS())
-    }
-
-    return plain // mutable version
+    return history.toJS() // mutable version
   },
 
   removeAllHistory: (state) => {
@@ -254,14 +246,13 @@ const userModelState = {
     return state
   },
 
-  // Q(nejc) why are we logging user model error in the ledger info, which is display on the payments page
   setUserModelError: (state, error, caller) => {
     state = validateState(state)
 
     state = state.setIn(['userModel', 'info', 'error'], Immutable.fromJS({
       caller: caller,
       error: error
-    })) // copy pasta from ledger
+    }))
 
     return state
   }
