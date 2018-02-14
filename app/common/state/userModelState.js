@@ -10,7 +10,7 @@
 // 3. ad served, time, value (3 month buffer)
 // 4. error (something went wrong)
 // 5. page classification scores, score, url, (time) (3 month buffer)
-// 6. usermodel unidle time (last time browser woke up)
+// 6. userModel unidle time (last time browser woke up)
 // at present, searching and shopping states need to be initialized and properly set
 // there is still missing something in the reducer which calls them at the right time,
 // unless we want to just overload the APP_TEXT_SCRAPER_DATA_AVAILABLE section and test for all shoppiness there
@@ -104,10 +104,10 @@ const userModelState = {
 
     const date = new Date().getTime()
     state = state
-      .setIn(['userModel', 'searchactivity'], true)
-      .setIn(['userModel', 'searchurl'], url)  // can we check this here?
+      .setIn(['userModel', 'searchActivity'], true)
+      .setIn(['userModel', 'searchUrl'], url)  // can we check this here?
       .setIn(['userModel', 'score'], score)
-      .setIn(['userModel', 'lastsearchtime'], date)
+      .setIn(['userModel', 'lastSearchTime'], date)
 
     return state
   },
@@ -120,14 +120,14 @@ const userModelState = {
     }
 
     // if you're still at the same url, you're still searching; maybe this should log an error
-    if (state.getIn(['userModel', 'searchurl']) === url) {
+    if (state.getIn(['userModel', 'searchUrl']) === url) {
       return state
     }
 
     const date = new Date().getTime()
     state = state
-      .setIn(['userModel', 'searchactivity'], false) // toggle off date probably more useful
-      .setIn(['userModel', 'lastsearchtime'], date)
+      .setIn(['userModel', 'searchActivity'], false) // toggle off date probably more useful
+      .setIn(['userModel', 'lastSearchTime'], date)
 
     return state
   },
@@ -138,26 +138,26 @@ const userModelState = {
     const date = new Date().getTime()
 
     state = state
-      .setIn(['userModel', 'shopactivity'], true) // never hit; I think design is wrong
-      .setIn(['userModel', 'shopurl'], url)
-      .setIn(['userModel', 'lastshoptime'], date)
+      .setIn(['userModel', 'shopActivity'], true) // never hit; I think design is wrong
+      .setIn(['userModel', 'shopUrl'], url)
+      .setIn(['userModel', 'lastShopTime'], date)
 
     return state
   },
 
   getSearchState: (state) => {
     state = validateState(state)
-    return state.getIn(['userModel', 'searchactivity'])
+    return state.getIn(['userModel', 'searchActivity'])
   },
 
   getShoppingState: (state) => {
     state = validateState(state)
-    return state.getIn(['userModel', 'shopactivity'])
+    return state.getIn(['userModel', 'shopActivity'])
   },
 
   unFlagShoppingState: (state) => {
     state = validateState(state)
-    state = state.setIn(['userModel', 'shopactivity'], false)
+    state = state.setIn(['userModel', 'shopActivity'], false)
     return state
   },
 
@@ -165,9 +165,9 @@ const userModelState = {
     state = validateState(state)
     const date = new Date().getTime()
     state = state
-      .setIn(['userModel', 'purchasetime'], date)
-      .setIn(['userModel', 'purchaseurl'], url)
-      .setIn(['userModel', 'purchaseactive'], true)
+      .setIn(['userModel', 'purchaseTime'], date)
+      .setIn(['userModel', 'purchaseUrl'], url)
+      .setIn(['userModel', 'purchaseActive'], true)
 
     return state
   },
@@ -191,7 +191,7 @@ const userModelState = {
     state = state
       .setIn(['userModel', 'updated'], date)
       .setIn(['userModel', 'url'], url)
-      .setIn(['userModel', 'pageclass'], pageClass)
+      .setIn(['userModel', 'pageClass'], pageClass)
 
     return state
   },
@@ -208,9 +208,9 @@ const userModelState = {
 
     const date = new Date().getTime()
     state = state
-      .setIn(['userModel', 'lastadtime'], date)
-      .setIn(['userModel', 'adserved'], adServed)
-      .setIn(['userModel', 'adclass'], adClass)
+      .setIn(['userModel', 'lastAdTime'], date)
+      .setIn(['userModel', 'adServed'], adServed)
+      .setIn(['userModel', 'adClass'], adClass)
 
     return state
   },
@@ -218,9 +218,9 @@ const userModelState = {
   getLastServedAd: (state) => {
     state = validateState(state)
     const result = {
-      lastadtime: state.getIn(['userModel', 'lastadtime']),
-      lastadserved: state.getIn(['userModel', 'adserved']),
-      lastadclass: state.getIn(['userModel', 'adclass'])
+      lastAdTime: state.getIn(['userModel', 'lastAdTime']),
+      lastAdServed: state.getIn(['userModel', 'adServed']),
+      lastAdClass: state.getIn(['userModel', 'adClass'])
     }
 
     return Immutable.fromJS(result) || Immutable.Map()
@@ -229,27 +229,27 @@ const userModelState = {
   setLastUserActivity: (state) => {
     state = validateState(state)
     const date = new Date().getTime()
-    state = state.setIn(['userModel', 'lastuseractivity'], date)
+    state = state.setIn(['userModel', 'lastUserActivity'], date)
     return state
   },
 
   setAdFrequency: (state, freq) => {
     state = validateState(state)
-    state = state.setIn(['userModel', 'adfrequency'], freq)
+    state = state.setIn(['userModel', 'adFrequency'], freq)
     return state
   },
 
   setLastUserIdleStopTime: (state) => {
     state = validateState(state)
     const date = new Date().getTime()
-    state = state.setIn(['userModel', 'lastuseridlestoptime'], date)
+    state = state.setIn(['userModel', 'lastUserIdleStopTime'], date)
     return state
   },
 
   setUserModelError: (state, error, caller) => {
     state = validateState(state)
 
-    state = state.setIn(['userModel', 'info', 'error'], Immutable.fromJS({
+    state = state.setIn(['userModel', 'error'], Immutable.fromJS({
       caller: caller,
       error: error
     }))
