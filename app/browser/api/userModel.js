@@ -119,17 +119,17 @@ function randomKey (dictionary) {
 }
 
 const goAheadAndShowTheAd = (windowId, categoryName, notificationText, notificationUrl) => {
-    appActions.onUserModelDemoValue(`Ads shown: ${categoryName}`)
-    windowActions.onNativeNotificationOpen(
+  appActions.onUserModelDemoValue(`Ads shown: ${categoryName}`)
+  windowActions.onNativeNotificationOpen(
       windowId,
       `Brave Ad: ${categoryName}`,
-      {
-        body: notificationText,
-        data: {
-          notificationUrl,
-          notificationId: notificationTypes.ADS
-        }
+    {
+      body: notificationText,
+      data: {
+        notificationUrl,
+        notificationId: notificationTypes.ADS
       }
+    }
     )
 }
 
@@ -189,13 +189,12 @@ const classifyPage = (state, action, windowId) => {
 }
 
 const basicCheckReadyAdServe = (state, windowId) => {
-
   if (!priorData) {
     return state
   }
 
   let catNames = priorData['names']
-  ///////////////////////////////////
+  /// ////////////////////////////////
 
   let mutable = true
   let history = userModelState.getPageScoreHistory(state, mutable)

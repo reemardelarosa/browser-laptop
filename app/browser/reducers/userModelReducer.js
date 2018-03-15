@@ -79,11 +79,11 @@ const userModelReducer = (state, action, immutableAction) => {
       }
     case appConstants.APP_IDLE_STATE_CHANGED: // TODO where to set this globally
       {
-console.log('idle state changed. action: ', action)
+        console.log('idle state changed. action: ', action)
 
         const activeWindowId = windows.getActiveWindowId()
 
-        if (action.has('idleState') && action.get('idleState') == 'active') {
+        if (action.has('idleState') && action.get('idleState') === 'active') {
           state = userModel.recordUnIdle(state)
           state = userModel.basicCheckReadyAdServe(state, activeWindowId)
         }

@@ -28,7 +28,7 @@ const {makeImmutable, isMap} = require('../../common/state/immutableUtil')
 const urlUtil = require('../../../js/lib/urlutil')
 
 const maxRowsInPageScoreHistory = 5
-const maxRowsInAdsShownHistory = 6 // this 
+const maxRowsInAdsShownHistory = 6 // this
 const timeSecondsWindowForAdsShownHistory = 24 * 60 * 60
 
 const validateState = function (state) {
@@ -39,7 +39,7 @@ const validateState = function (state) {
 }
 
 const unixTimeNowSeconds = function () {
-  return Math.round(+new Date()/1000)
+  return Math.round(+new Date() / 1000)
 }
 
 const appendToRingBufferUnderKey = (state, key, item, maxRows) => {
@@ -96,7 +96,6 @@ const userModelState = {
   },
 
   allowedToShowAdBasedOnHistory: (state) => {
-
     let history = state.getIn(['userModel', 'adsShownHistory']) || []
 
     let n = history.size
@@ -107,7 +106,7 @@ const userModelState = {
 
     let oldest = null
 
-    if (0 < n) {
+    if (n > 0) {
       oldest = history.get(0)
 
       let delta = unixTimeNowSeconds() - oldest
@@ -116,7 +115,6 @@ const userModelState = {
         return false
       }
     }
-
 
     return true
   },
