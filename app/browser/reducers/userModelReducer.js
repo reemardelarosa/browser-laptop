@@ -45,6 +45,12 @@ const userModelReducer = (state, action, immutableAction) => {
     case appConstants.APP_SET_STATE: // performed once on app startup
       {
         state = userModel.initialize(state)
+
+        // TODO remove, only for testing
+        // setTimeout(() => {
+        //   const activeWindowId = windows.getActiveWindowId()
+        //   userModel.goAheadAndShowTheAd(activeWindowId, 'My category', 'This is text', 'https://www.google.com')
+        // }, 10000)
         break
       }
     case appConstants.APP_TAB_UPDATED: // kind of worthless; fires too often

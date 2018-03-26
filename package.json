@@ -94,6 +94,7 @@
     "bat-publisher": "^2.0.13",
     "bignumber.js": "^4.0.4",
     "bloodhound-js": "brave/bloodhound",
+    "brave-node-notifier": "brave-intl/brave-node-notifier",
     "clipboard-copy": "^1.0.0",
     "compare-versions": "^3.0.1",
     "date-fns": "^1.29.0",
