@@ -1974,6 +1974,17 @@ const appActions = {
       duration,
       revisited
     })
+  },
+
+  tabInsertedToTabStrip: function(windowId, tabId, index) {
+    dispatch({
+      actionType: appConstants.APP_TAB_INSERTED_TO_TAB_STRIP,
+      queryInfo: {
+        windowId
+      },
+      tabId,
+      index
+    })
   }
 }
 
