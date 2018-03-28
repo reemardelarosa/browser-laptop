@@ -184,7 +184,7 @@ if (isDarwin) {
 
 cmds.push('mkdirp ' + torPath)
 cmds.push('curl -o ' + path.join(torPath, 'tor') + ' ' + torURL)
-cmds.push('shasum -a 512 -c <<< "' + sha512Tor + path.join(torPath, 'tor') + '"')
+cmds.push('bash -c \'shasum -a 512 -c <<< "' + sha512Tor + path.join(torPath, 'tor') + '"\'')
 
 if (isWindows) {
   cmds.push('unzip ' + path.join(torPath, 'tor') + ' -d ' + path.join(buildDir, 'resources', 'extensions', 'bin'))
