@@ -287,6 +287,19 @@ const api = {
             console.log(`window ${win.id} had ${!active ? 'in' : ''}active tab ${tabId} inserted at index ${index}`)
           }
         })
+        win.webContents.on('tab-strip-empty', () => {
+          win.hide()
+          // must wait for pending tabs to be attached to new window before closing
+          // TODO(petemill): race condition if multiple different tabs are moved at the same time
+          // ...tab-strip-empty may fire before all of those tabs are inserted to new window
+          // TODO: check this again after fix from bridiver for issue where
+          // closing source window will close any tabs that originated in that window
+          console.log(`window ${win.id} tab strip empty`, arguments)
+          win.webContents.once('detached-tab-new-window', () => {
+            console.log('departing tab made it to new window')
+            api.closeWindow(win.id)
+          })
+        })
         win.on('scroll-touch-begin', function (e) {
           win.webContents.send('scroll-touch-begin')
         })
